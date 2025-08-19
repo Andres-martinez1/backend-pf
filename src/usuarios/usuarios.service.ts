@@ -5,6 +5,7 @@ import { Usuarios } from "./entities/usuario.entity";
 
 @Injectable()
 export class UsuariosService {
+  
   constructor(
     @InjectRepository(Usuarios)
     private readonly usuariosRepository: Repository<Usuarios>,
@@ -13,13 +14,13 @@ export class UsuariosService {
   async create(data: Partial<Usuarios>): Promise<{ message: string; data: Usuarios }> {
     try {
       const nuevoUsuario = this.usuariosRepository.create(data);
-      await this.usuariosRepository.save(nuevoUsuario);
+      const usuarioGuardado = await this.usuariosRepository.save(nuevoUsuario);
       return {
         message: "Usuario creado correctamente",
-        data: nuevoUsuario,
+        data: usuarioGuardado,
       };
     } catch (error) {
-      throw new InternalServerErrorException("Error al crear el usuario");
+      throw new InternalServerErrorException(`Error al crear el usuario: ${error.message}`);
     }
   }
 
@@ -37,12 +38,15 @@ export class UsuariosService {
           "fkIdRol",
         ],
       });
+
       return {
-        message: "Listado de usuarios obtenido correctamente",
+        message: usuarios.length
+          ? "Listado de usuarios obtenido correctamente"
+          : "No se encontraron usuarios registrados",
         data: usuarios,
       };
     } catch (error) {
-      throw new InternalServerErrorException("Error al obtener los usuarios");
+      throw new InternalServerErrorException(`Error al obtener los usuarios: ${error.message}`);
     }
   }
 
@@ -72,11 +76,14 @@ export class UsuariosService {
       };
     } catch (error) {
       if (error instanceof NotFoundException) throw error;
-      throw new InternalServerErrorException("Error al obtener el usuario");
+      throw new InternalServerErrorException(`Error al obtener el usuario: ${error.message}`);
     }
   }
 
-  async update(id: number, data: Partial<Usuarios>): Promise<{ message: string; data: Usuarios }> {
+  async update(
+    id: number,
+    data: Partial<Usuarios>
+  ): Promise<{ message: string; data: Usuarios }> {
     try {
       const usuario = await this.usuariosRepository.findOne({ where: { idUsuario: id } });
 
@@ -85,15 +92,15 @@ export class UsuariosService {
       }
 
       Object.assign(usuario, data);
-      await this.usuariosRepository.save(usuario);
+      const usuarioActualizado = await this.usuariosRepository.save(usuario);
 
       return {
         message: "Usuario actualizado correctamente",
-        data: usuario,
+        data: usuarioActualizado,
       };
     } catch (error) {
       if (error instanceof NotFoundException) throw error;
-      throw new InternalServerErrorException("Error al actualizar el usuario");
+      throw new InternalServerErrorException(`Error al actualizar el usuario: ${error.message}`);
     }
   }
 
@@ -107,12 +114,17 @@ export class UsuariosService {
 
       await this.usuariosRepository.remove(usuario);
 
-      return {
-        message: "Usuario eliminado correctamente",
-      };
+      return { message: "Usuario eliminado correctamente" };
     } catch (error) {
       if (error instanceof NotFoundException) throw error;
-      throw new InternalServerErrorException("Error al eliminar el usuario");
+      throw new InternalServerErrorException(`Error al eliminar el usuario: ${error.message}`);
     }
   }
+
+  async findByEmail(correo: string): Promise<Usuarios | null> {
+  return await this.usuariosRepository.findOne({
+    where: { correo },
+    relations: ["fkIdRol", "fkIdArea", "fkIdPermisos"], // relaciones necesarias
+  });
+}
 }

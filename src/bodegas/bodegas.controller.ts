@@ -1,33 +1,71 @@
-import { Controller, Get, Post, Body, Param, Delete, Put } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Put,
+  Delete,
+  Param,
+  Body,
+  ParseIntPipe,
+} from '@nestjs/common';
 import { BodegasService } from './bodegas.service';
-import { Bodegas } from './entities/bodega.entity';
 
 @Controller('bodegas')
 export class BodegasController {
   constructor(private readonly bodegasService: BodegasService) {}
 
   @Post()
-  create(@Body() data: Partial<Bodegas>) {
-    return this.bodegasService.create(data);
+  async create(
+    @Body('nombreBodega') nombreBodega: string,
+    @Body('sedeId', ParseIntPipe) sedeId: number,
+    @Body('usuarioId', ParseIntPipe) usuarioId: number,
+    @Body('img') img?: string,
+    @Body('capacidadMaxima') capacidadMaxima?: number,
+    @Body('descripcion') descripcion?: string,
+  ) {
+    return this.bodegasService.create(
+      nombreBodega,
+      sedeId,
+      usuarioId,
+      img,
+      capacidadMaxima,
+      descripcion,
+    );
   }
 
   @Get()
-  findAll() {
+  async findAll() {
     return this.bodegasService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: number) {
-    return this.bodegasService.findOne(+id);
+  async findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.bodegasService.findOne(id);
   }
 
   @Put(':id')
-  update(@Param('id') id: number, @Body() data: Partial<Bodegas>) {
-    return this.bodegasService.update(+id, data);
+  async update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body('nombreBodega') nombreBodega?: string,
+    @Body('sedeId') sedeId?: number,
+    @Body('usuarioId') usuarioId?: number,
+    @Body('img') img?: string,
+    @Body('capacidadMaxima') capacidadMaxima?: number,
+    @Body('descripcion') descripcion?: string,
+  ) {
+    return this.bodegasService.update(
+      id,
+      nombreBodega,
+      sedeId,
+      usuarioId,
+      img,
+      capacidadMaxima,
+      descripcion,
+    );
   }
 
   @Delete(':id')
-  remove(@Param('id') id: number) {
-    return this.bodegasService.remove(+id);
+  async remove(@Param('id', ParseIntPipe) id: number) {
+    return this.bodegasService.remove(id);
   }
 }

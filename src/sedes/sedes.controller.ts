@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Param, Delete, Put } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Put,
+  Delete,
+  Param,
+  Body,
+  ParseIntPipe,
+} from '@nestjs/common';
 import { SedesService } from './sedes.service';
 import { Sedes } from './entities/sede.entity';
 
@@ -6,28 +15,35 @@ import { Sedes } from './entities/sede.entity';
 export class SedesController {
   constructor(private readonly sedesService: SedesService) {}
 
-  @Post()
-  create(@Body() data: Partial<Sedes>) {
-    return this.sedesService.create(data);
-  }
-
   @Get()
-  findAll() {
-    return this.sedesService.findAll();
+  async findAll(): Promise<Sedes[]> {
+    return await this.sedesService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: number) {
-    return this.sedesService.findOne(+id);
+  async findOne(@Param('id', ParseIntPipe) id: number): Promise<Sedes> {
+    return await this.sedesService.findOne(id);
+  }
+
+  @Post()
+  async create(
+    @Body('nombreSede') nombreSede: string,
+    @Body('centroId', ParseIntPipe) centroId: number,
+  ): Promise<{ message: string; sede: Sedes }> {
+    return await this.sedesService.create(nombreSede, centroId);
   }
 
   @Put(':id')
-  update(@Param('id') id: number, @Body() data: Partial<Sedes>) {
-    return this.sedesService.update(+id, data);
+  async update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body('nombreSede') nombreSede?: string,
+    @Body('centroId', ParseIntPipe) centroId?: number,
+  ): Promise<{ message: string; sede: Sedes }> {
+    return await this.sedesService.update(id, nombreSede, centroId);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: number) {
-    return this.sedesService.remove(+id);
+  async remove(@Param('id', ParseIntPipe) id: number): Promise<{ message: string }> {
+    return await this.sedesService.remove(id);
   }
 }

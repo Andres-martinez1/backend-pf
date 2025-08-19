@@ -1,33 +1,86 @@
-import { Controller, Get, Post, Body, Param, Delete, Put } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Put,
+  Delete,
+  Param,
+  Body,
+  ParseIntPipe,
+} from '@nestjs/common';
 import { FichaService } from './ficha.service';
-import { Ficha } from './entities/ficha.entity';
 
-@Controller('ficha')
+@Controller('fichas')
 export class FichaController {
   constructor(private readonly fichaService: FichaService) {}
 
   @Post()
-  create(@Body() data: Partial<Ficha>) {
-    return this.fichaService.create(data);
+  async create(
+    @Body('numeroFicha') numeroFicha: string,
+    @Body('municipioId', ParseIntPipe) municipioId: number,
+    @Body('programaId', ParseIntPipe) programaId: number,
+    @Body('sedeId', ParseIntPipe) sedeId: number,
+  ) {
+    const ficha = await this.fichaService.create(
+      numeroFicha,
+      municipioId,
+      programaId,
+      sedeId,
+    );
+
+    return {
+      message: 'Ficha creada exitosamente',
+      data: ficha,
+    };
   }
 
   @Get()
-  findAll() {
-    return this.fichaService.findAll();
+  async findAll() {
+    const fichas = await this.fichaService.findAll();
+    return {
+      message: 'Listado de fichas',
+      data: fichas,
+    };
   }
 
   @Get(':id')
-  findOne(@Param('id') id: number) {
-    return this.fichaService.findOne(+id);
+  async findOne(@Param('id', ParseIntPipe) id: number) {
+    const ficha = await this.fichaService.findOne(id);
+    return {
+      message: 'Ficha encontrada',
+      data: ficha,
+    };
   }
 
   @Put(':id')
-  update(@Param('id') id: number, @Body() data: Partial<Ficha>) {
-    return this.fichaService.update(+id, data);
+  async update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body('numeroFicha') numeroFicha?: string,
+    @Body('municipioId', ParseIntPipe) municipioId?: number,
+    @Body('programaId', ParseIntPipe) programaId?: number,
+    @Body('sedeId', ParseIntPipe) sedeId?: number,
+  ) {
+    const ficha = await this.fichaService.update(
+      id,
+      numeroFicha,
+      municipioId,
+      programaId,
+      sedeId,
+    );
+
+    return {
+      message: 'Ficha actualizada exitosamente',
+      data: ficha,
+    };
   }
 
   @Delete(':id')
-  remove(@Param('id') id: number) {
-    return this.fichaService.remove(+id);
+  async remove(@Param('id', ParseIntPipe) id: number) {
+    await this.fichaService.remove(id);
+    return {
+      message: 'Ficha eliminada exitosamente',
+    };
   }
 }
+export { FichaService };
+

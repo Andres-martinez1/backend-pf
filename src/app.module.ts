@@ -5,21 +5,14 @@ import { AppService } from './app.service';
 import { AreasModule } from './areas/areas.module';
 import { BodegasModule } from './bodegas/bodegas.module';
 import { CentrosModule } from './centros/centros.module';
-import { DetalleSolicitudModule } from './detalle_solicitud/detalle_solicitud.module';
-import { DetallesModule } from './detalles/detalles.module';
-import { DetallesEntregaModule } from './detalles_entrega/detalles_entrega.module';
 import { ElementosModule } from './elementos/elementos.module';
-import { EntradasModule } from './entradas/entradas.module';
-import { EntregaMaterialModule } from './entrega_material/entrega_material.module';
 import { FichaModule } from './ficha/ficha.module';
 import { MovimientosModule } from './movimientos/movimientos.module';
 import { MunicipioModule } from './municipio/municipio.module';
 import { ProgramasModule } from './programas/programas.module';
 import { RolesModule } from './roles/roles.module';
-import { SalidasModule } from './salidas/salidas.module';
 import { SedesModule } from './sedes/sedes.module';
 import { SolicitudesModule } from './solicitudes/solicitudes.module';
-import { TrazabilidadModule } from './trazabilidad/trazabilidad.module';
 import { UsuarioBodegaModule } from './usuario_bodega/usuario_bodega.module';
 import { UsuarioFichaModule } from './usuario_ficha/usuario_ficha.module';
 import { UsuariosModule } from './usuarios/usuarios.module';
@@ -50,21 +43,14 @@ import { BodegaElementoModule } from './bodega-elemento/bodega-elemento.module';
     AreasModule,
     BodegasModule,
     CentrosModule,
-    DetalleSolicitudModule,
-    DetallesModule,
-    DetallesEntregaModule,
     ElementosModule,
-    EntradasModule,
-    EntregaMaterialModule,
     FichaModule,
     MovimientosModule,
     MunicipioModule,
     ProgramasModule,
     RolesModule,
-    SalidasModule,
     SedesModule,
     SolicitudesModule,
-    TrazabilidadModule,
     UsuarioBodegaModule,
     UsuarioFichaModule,
     UsuariosModule,

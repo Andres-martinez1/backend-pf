@@ -1,5 +1,4 @@
 // src/auth/auth.service.ts
-
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { UsuariosService } from 'src/usuarios/usuarios.service';
@@ -13,8 +12,8 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async validateUser(email: string, password: string): Promise<Usuarios> {
-    const user = await this.usuarioService.findByEmail(email);
+  async validateUser(correo: string, password: string): Promise<Usuarios> {
+    const user = await this.usuarioService.findByEmail(correo);
 
     if (!user) {
       throw new UnauthorizedException('Usuario no encontrado');
@@ -45,9 +44,9 @@ export class AuthService {
       access_token: accessToken,
       user: {
         id: user.idUsuario,
-        nombre: user.nombres,
+        nombre: `${user.nombres} ${user.apellidos}`,
         email: user.correo,
-        rol: user.fkIdRol?.nombreRol,
+        rol: user.fkIdRol?.nombreRol || null,
       },
     };
   }

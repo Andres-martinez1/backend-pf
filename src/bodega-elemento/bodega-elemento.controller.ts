@@ -1,34 +1,63 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Put,
+  Delete,
+  Param,
+  Body,
+  ParseIntPipe,
+} from '@nestjs/common';
 import { BodegaElementoService } from './bodega-elemento.service';
-import { CreateBodegaElementoDto } from './dto/create-bodega-elemento.dto';
-import { UpdateBodegaElementoDto } from './dto/update-bodega-elemento.dto';
 
 @Controller('bodega-elemento')
 export class BodegaElementoController {
   constructor(private readonly bodegaElementoService: BodegaElementoService) {}
 
   @Post()
-  create(@Body() createBodegaElementoDto: CreateBodegaElementoDto) {
-    return this.bodegaElementoService.create(createBodegaElementoDto);
+  async create(
+    @Body('stockActual', ParseIntPipe) stockActual: number,
+    @Body('stockMinimo', ParseIntPipe) stockMinimo: number,
+    @Body('bodegaId', ParseIntPipe) bodegaId: number,
+    @Body('elementoId', ParseIntPipe) elementoId: number,
+  ) {
+    return this.bodegaElementoService.create(
+      stockActual,
+      stockMinimo,
+      bodegaId,
+      elementoId,
+    );
   }
 
   @Get()
-  findAll() {
+  async findAll() {
     return this.bodegaElementoService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.bodegaElementoService.findOne(+id);
+  async findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.bodegaElementoService.findOne(id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateBodegaElementoDto: UpdateBodegaElementoDto) {
-    return this.bodegaElementoService.update(+id, updateBodegaElementoDto);
+  @Put(':id')
+  async update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body('stockActual') stockActual?: number,
+    @Body('stockMinimo') stockMinimo?: number,
+    @Body('bodegaId') bodegaId?: number,
+    @Body('elementoId') elementoId?: number,
+  ) {
+    return this.bodegaElementoService.update(
+      id,
+      stockActual,
+      stockMinimo,
+      bodegaId,
+      elementoId,
+    );
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.bodegaElementoService.remove(+id);
+  async remove(@Param('id', ParseIntPipe) id: number) {
+    return this.bodegaElementoService.remove(id);
   }
 }

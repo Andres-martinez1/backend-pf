@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Param, Delete, Put } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Put,
+  Delete,
+  Param,
+  Body,
+  ParseIntPipe,
+} from '@nestjs/common';
 import { SolicitudesService } from './solicitudes.service';
 import { Solicitudes } from './entities/solicitud.entity';
 
@@ -6,28 +15,66 @@ import { Solicitudes } from './entities/solicitud.entity';
 export class SolicitudesController {
   constructor(private readonly solicitudesService: SolicitudesService) {}
 
-  @Post()
-  create(@Body() data: Partial<Solicitudes>) {
-    return this.solicitudesService.create(data);
-  }
-
   @Get()
-  findAll() {
-    return this.solicitudesService.findAll();
+  async findAll(): Promise<{ message: string; data: Solicitudes[] }> {
+    return await this.solicitudesService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: number) {
-    return this.solicitudesService.findOne(+id);
+  async findOne(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<{ message: string; data: Solicitudes }> {
+    return await this.solicitudesService.findOne(id);
+  }
+
+  @Post()
+  async create(
+    @Body('estadoSolicitud') estadoSolicitud: string,
+    @Body('fechaDevolucion') fechaDevolucion: string,
+    @Body('prioridad') prioridad: string,
+    @Body('motivo') motivo: string,
+    @Body('comentariosUsuario') comentariosUsuario: string,
+    @Body('cantidad', ParseIntPipe) cantidad: number,
+    @Body('idUsuarioSolicitante', ParseIntPipe) idUsuarioSolicitante: number,
+  ): Promise<{ message: string; data: Solicitudes }> {
+    return await this.solicitudesService.create(
+      estadoSolicitud,
+      fechaDevolucion,
+      prioridad,
+      motivo,
+      comentariosUsuario,
+      cantidad,
+      idUsuarioSolicitante,
+    );
   }
 
   @Put(':id')
-  update(@Param('id') id: number, @Body() data: Partial<Solicitudes>) {
-    return this.solicitudesService.update(+id, data);
+  async update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body('estadoSolicitud') estadoSolicitud?: string,
+    @Body('fechaDevolucion') fechaDevolucion?: string,
+    @Body('prioridad') prioridad?: string,
+    @Body('motivo') motivo?: string,
+    @Body('comentariosUsuario') comentariosUsuario?: string,
+    @Body('cantidad', ParseIntPipe) cantidad?: number,
+    @Body('idUsuarioSolicitante', ParseIntPipe) idUsuarioSolicitante?: number,
+  ): Promise<{ message: string; data: Solicitudes }> {
+    return await this.solicitudesService.update(
+      id,
+      estadoSolicitud,
+      fechaDevolucion,
+      prioridad,
+      motivo,
+      comentariosUsuario,
+      cantidad,
+      idUsuarioSolicitante,
+    );
   }
 
   @Delete(':id')
-  remove(@Param('id') id: number) {
-    return this.solicitudesService.remove(+id);
+  async remove(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<{ message: string }> {
+    return await this.solicitudesService.remove(id);
   }
 }

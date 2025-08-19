@@ -1,33 +1,49 @@
-import { Controller, Get, Post, Body, Param, Delete, Put } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Put,
+  Delete,
+  Param,
+  Body,
+  ParseIntPipe,
+} from '@nestjs/common';
 import { MunicipioService } from './municipio.service';
-import { Municipio } from './entities/municipio.entity';
 
-@Controller('municipio')
+@Controller('municipios')
 export class MunicipioController {
-  constructor(private readonly municipiosService: MunicipioService) {}
-
-  @Post()
-  create(@Body() data: Partial<Municipio>) {
-    return this.municipiosService.create(data);
-  }
+  constructor(private readonly municipioService: MunicipioService) {}
 
   @Get()
-  findAll() {
-    return this.municipiosService.findAll();
+  async findAll() {
+    const result = await this.municipioService.findAll();
+    return result;
   }
 
   @Get(':id')
-  findOne(@Param('id') id: number) {
-    return this.municipiosService.findOne(+id);
+  async findOne(@Param('id', ParseIntPipe) id: number) {
+    const result = await this.municipioService.findOne(id);
+    return result;
+  }
+
+  @Post()
+  async create(@Body('nombreMunicipio') nombreMunicipio: string) {
+    const result = await this.municipioService.create(nombreMunicipio);
+    return result;
   }
 
   @Put(':id')
-  update(@Param('id') id: number, @Body() data: Partial<Municipio>) {
-    return this.municipiosService.update(+id, data);
+  async update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body('nombreMunicipio') nombreMunicipio?: string,
+  ) {
+    const result = await this.municipioService.update(id, nombreMunicipio);
+    return result;
   }
 
   @Delete(':id')
-  remove(@Param('id') id: number) {
-    return this.municipiosService.remove(+id);
+  async remove(@Param('id', ParseIntPipe) id: number) {
+    const result = await this.municipioService.remove(id);
+    return result;
   }
 }

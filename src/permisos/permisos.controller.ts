@@ -1,33 +1,76 @@
-import { Controller, Get, Post, Put, Delete, Body, Param } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Put,
+  Delete,
+  Param,
+  Body,
+  ParseIntPipe,
+} from '@nestjs/common';
 import { PermisosService } from './permisos.service';
-import { Permisos } from './Entities/permiso.entity';
 
 @Controller('permisos')
 export class PermisosController {
   constructor(private readonly permisosService: PermisosService) {}
 
   @Get()
-  findAll() {
-    return this.permisosService.findAll();
+  async findAll() {
+    const result = await this.permisosService.findAll();
+    return result;
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.permisosService.findOne(+id);
+  async findOne(@Param('id', ParseIntPipe) id: number) {
+    const result = await this.permisosService.findOne(id);
+    return result;
   }
 
   @Post()
-  create(@Body() data: Partial<Permisos>) {
-    return this.permisosService.create(data);
+  async create(
+    @Body('accesoVer') accesoVer: boolean,
+    @Body('accesoCrear') accesoCrear: boolean,
+    @Body('accesoEditar') accesoEditar: boolean,
+    @Body('accesoEliminar') accesoEliminar: boolean,
+    @Body('idOpcion', ParseIntPipe) idOpcion: number,
+    @Body('idRol', ParseIntPipe) idRol: number,
+  ) {
+    const result = await this.permisosService.create(
+      accesoVer,
+      accesoCrear,
+      accesoEditar,
+      accesoEliminar,
+      idOpcion,
+      idRol,
+    );
+    return result;
   }
 
   @Put(':id')
-  update(@Param('id') id: string, @Body() data: Partial<Permisos>) {
-    return this.permisosService.update(+id, data);
+  async update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body('accesoVer') accesoVer?: boolean,
+    @Body('accesoCrear') accesoCrear?: boolean,
+    @Body('accesoEditar') accesoEditar?: boolean,
+    @Body('accesoEliminar') accesoEliminar?: boolean,
+    @Body('idOpcion', ParseIntPipe) idOpcion?: number,
+    @Body('idRol', ParseIntPipe) idRol?: number,
+  ) {
+    const result = await this.permisosService.update(
+      id,
+      accesoVer,
+      accesoCrear,
+      accesoEditar,
+      accesoEliminar,
+      idOpcion,
+      idRol,
+    );
+    return result;
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.permisosService.remove(+id);
+  async remove(@Param('id', ParseIntPipe) id: number) {
+    const result = await this.permisosService.remove(id);
+    return result;
   }
 }

@@ -17,7 +17,6 @@ import { JwtGuard } from './guards/jwt.guard';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  // LOGIN
   @Post('login')
   async login(
     @Body() loginDto: LoginDto,

@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Put, Delete, Body, Param } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Put,
+  Delete,
+  Param,
+  Body,
+  ParseIntPipe,
+} from '@nestjs/common';
 import { ModulosService } from './modulos.service';
 import { Modulos } from './Entities/modulo.entity';
 
@@ -7,27 +16,49 @@ export class ModulosController {
   constructor(private readonly modulosService: ModulosService) {}
 
   @Get()
-  findAll() {
-    return this.modulosService.findAll();
+  async findAll() {
+    const modulos = await this.modulosService.findAll();
+    return {
+      message: 'Listado de módulos',
+      data: modulos,
+    };
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.modulosService.findOne(+id);
+  async findOne(@Param('id', ParseIntPipe) id: number) {
+    const modulo = await this.modulosService.findOne(id);
+    return {
+      message: 'Módulo encontrado',
+      data: modulo,
+    };
   }
 
   @Post()
-  create(@Body() data: Partial<Modulos>) {
-    return this.modulosService.create(data);
+  async create(@Body() data: Partial<Modulos>) {
+    const modulo = await this.modulosService.create(data);
+    return {
+      message: 'Módulo creado exitosamente',
+      data: modulo,
+    };
   }
 
   @Put(':id')
-  update(@Param('id') id: string, @Body() data: Partial<Modulos>) {
-    return this.modulosService.update(+id, data);
+  async update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() data: Partial<Modulos>,
+  ) {
+    const modulo = await this.modulosService.update(id, data);
+    return {
+      message: 'Módulo actualizado exitosamente',
+      data: modulo,
+    };
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.modulosService.remove(+id);
+  async remove(@Param('id', ParseIntPipe) id: number) {
+    await this.modulosService.remove(id);
+    return {
+      message: 'Módulo eliminado exitosamente',
+    };
   }
 }
