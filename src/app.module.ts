@@ -1,7 +1,14 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+
+// ✅ Módulo para el envío de correos
+import { MailerModule } from '@nestjs-modules/mailer';
+
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+
+// --- Módulos de tu aplicación ---
 import { AreasModule } from './areas/areas.module';
 import { BodegasModule } from './bodegas/bodegas.module';
 import { CentrosModule } from './centros/centros.module';
@@ -21,25 +28,53 @@ import { OpcionesModule } from './opciones/opciones.module';
 import { ModulosController } from './modulos/modulos.controller';
 import { ModulosModule } from './modulos/modulos.module';
 import { AuthModule } from './auth/auth.module';
-import { ConfigModule } from '@nestjs/config';
 import { BodegaElementoModule } from './bodega-elemento/bodega-elemento.module';
 
 @Module({
   imports: [
+    // ✅ Configuración para cargar variables de entorno de forma global
     ConfigModule.forRoot({
-      isGlobal: true, 
+      isGlobal: true,
     }),
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: process.env.DB_HOST,
-      port: parseInt(process.env.DB_PORT ?? '5432'),
-      username: process.env.DB_USERNAME,
-      password: process.env.DB_PASSWORD,
-      database: process.env.DB_NAME,
-      entities: [__dirname + '/**/*.entity{.ts,.js}'],
-      autoLoadEntities: true,
-      synchronize: true,
+
+    // ✅ Configuración asíncrona de la conexión a la base de datos
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => ({
+        type: 'postgres',
+        host: config.get<string>('DB_HOST'),
+        port: parseInt(config.get<string>('DB_PORT', '5432')), // Valor por defecto por si no está en .env
+        username: config.get<string>('DB_USERNAME'),
+        password: config.get<string>('DB_PASSWORD'),
+        database: config.get<string>('DB_NAME'),
+        entities: [__dirname + '/**/*.entity{.ts,.js}'],
+        autoLoadEntities: true,
+        synchronize: true, // Recuerda: ideal para desarrollo, no para producción
+      }),
     }),
+
+    // ✅ Configuración del MailerModule para envío de correos
+    MailerModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => ({
+        transport: {
+          host: config.get<string>('MAIL_HOST'), // smtp.gmail.com
+          port: parseInt(config.get<string>('MAIL_PORT') || '587'),
+          secure: false, // para el puerto 587 se usa STARTTLS
+          auth: {
+            user: config.get<string>('MAIL_USER'), // mariaricotrujillo1115@gmail.com
+            pass: config.get<string>('MAIL_PASS'), // kibphksubxzvcmea
+          },
+        },
+        defaults: {
+          from: '"Soporte Inventario SENA" <no-reply@sena.edu.co>',
+        },
+      }),
+    }),
+
+    // ✅ Módulos propios de la aplicación
     AreasModule,
     BodegasModule,
     CentrosModule,
@@ -64,5 +99,3 @@ import { BodegaElementoModule } from './bodega-elemento/bodega-elemento.module';
   providers: [AppService],
 })
 export class AppModule {}
-
-
