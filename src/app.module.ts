@@ -61,7 +61,7 @@ import { BodegaElementoModule } from './bodega-elemento/bodega-elemento.module';
       useFactory: (config: ConfigService) => ({
         transport: {
           host: config.get<string>('MAIL_HOST'), // smtp.gmail.com
-          port: parseInt(config.get<string>('MAIL_PORT')), // 587
+          port: parseInt(config.get<string>('MAIL_PORT') || '587'),
           secure: false, // para el puerto 587 se usa STARTTLS
           auth: {
             user: config.get<string>('MAIL_USER'), // mariaricotrujillo1115@gmail.com
