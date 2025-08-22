@@ -7,9 +7,12 @@ import {
   Param,
   Body,
   ParseIntPipe,
+  UseGuards,
 } from '@nestjs/common';
 import { FichaService } from './ficha.service';
+import { JwtGuard } from 'src/auth/guards/jwt.guard';
 
+@UseGuards(JwtGuard)
 @Controller('fichas')
 export class FichaController {
   constructor(private readonly fichaService: FichaService) {}

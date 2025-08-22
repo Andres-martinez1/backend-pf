@@ -7,9 +7,12 @@ import {
   Param,
   Body,
   ParseIntPipe,
+  UseGuards,
 } from '@nestjs/common';
 import { BodegasService } from './bodegas.service';
+import { JwtGuard } from 'src/auth/guards/jwt.guard';
 
+@UseGuards(JwtGuard)
 @Controller('bodegas')
 export class BodegasController {
   constructor(private readonly bodegasService: BodegasService) {}

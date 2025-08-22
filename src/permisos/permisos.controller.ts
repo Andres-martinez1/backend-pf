@@ -7,9 +7,12 @@ import {
   Param,
   Body,
   ParseIntPipe,
+  UseGuards,
 } from '@nestjs/common';
 import { PermisosService } from './permisos.service';
+import { JwtGuard } from 'src/auth/guards/jwt.guard';
 
+@UseGuards(JwtGuard)
 @Controller('permisos')
 export class PermisosController {
   constructor(private readonly permisosService: PermisosService) {}

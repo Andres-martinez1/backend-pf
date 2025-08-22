@@ -7,10 +7,13 @@ import {
   Param,
   Body,
   ParseIntPipe,
+  UseGuards,
 } from '@nestjs/common';
 import { ModulosService } from './modulos.service';
 import { Modulos } from './Entities/modulo.entity';
+import { JwtGuard } from 'src/auth/guards/jwt.guard';
 
+@UseGuards(JwtGuard)
 @Controller('modulos')
 export class ModulosController {
   constructor(private readonly modulosService: ModulosService) {}

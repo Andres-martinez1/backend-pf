@@ -7,9 +7,12 @@ import {
   Param,
   Body,
   ParseIntPipe,
+  UseGuards,
 } from '@nestjs/common';
 import { MovimientosService } from './movimientos.service';
+import { JwtGuard } from 'src/auth/guards/jwt.guard';
 
+@UseGuards(JwtGuard)
 @Controller('movimientos')
 export class MovimientosController {
   constructor(private readonly movimientosService: MovimientosService) {}
