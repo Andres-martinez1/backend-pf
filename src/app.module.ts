@@ -1,14 +1,9 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-
-// ✅ Módulo para el envío de correos
 import { MailerModule } from '@nestjs-modules/mailer';
-
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-
-// --- Módulos de tu aplicación ---
 import { AreasModule } from './areas/areas.module';
 import { BodegasModule } from './bodegas/bodegas.module';
 import { CentrosModule } from './centros/centros.module';
@@ -32,40 +27,39 @@ import { BodegaElementoModule } from './bodega-elemento/bodega-elemento.module';
 
 @Module({
   imports: [
-    // ✅ Configuración para cargar variables de entorno de forma global
     ConfigModule.forRoot({
       isGlobal: true,
     }),
 
-    // ✅ Configuración asíncrona de la conexión a la base de datos
+  
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
         type: 'postgres',
         host: config.get<string>('DB_HOST'),
-        port: parseInt(config.get<string>('DB_PORT', '5432')), // Valor por defecto por si no está en .env
+        port: parseInt(config.get<string>('DB_PORT', '5432')), 
         username: config.get<string>('DB_USERNAME'),
         password: config.get<string>('DB_PASSWORD'),
         database: config.get<string>('DB_NAME'),
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
         autoLoadEntities: true,
-        synchronize: true, // Recuerda: ideal para desarrollo, no para producción
+        synchronize: true, 
       }),
     }),
 
-    // ✅ Configuración del MailerModule para envío de correos
+  
     MailerModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
         transport: {
-          host: config.get<string>('MAIL_HOST'), // smtp.gmail.com
+          host: config.get<string>('MAIL_HOST'), 
           port: parseInt(config.get<string>('MAIL_PORT') || '587'),
-          secure: false, // para el puerto 587 se usa STARTTLS
+          secure: false, 
           auth: {
-            user: config.get<string>('MAIL_USER'), // mariaricotrujillo1115@gmail.com
-            pass: config.get<string>('MAIL_PASS'), // kibphksubxzvcmea
+            user: config.get<string>('MAIL_USER'), 
+            pass: config.get<string>('MAIL_PASS'), 
           },
         },
         defaults: {
@@ -74,7 +68,7 @@ import { BodegaElementoModule } from './bodega-elemento/bodega-elemento.module';
       }),
     }),
 
-    // ✅ Módulos propios de la aplicación
+
     AreasModule,
     BodegasModule,
     CentrosModule,
